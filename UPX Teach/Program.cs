@@ -92,7 +92,7 @@ namespace UPX_Teach
 
         public static double Test(NextGen net, List<Round> rounds, int games, double chanceToRate)
         {
-            List<LearningSet> sets = CreateLearnSets(rounds, games);//
+            List<LearningSet> sets = CreateLearnSets(rounds, games);
             int wins = 0;
             int errors = 0;
             int[] ress = new int[3];
