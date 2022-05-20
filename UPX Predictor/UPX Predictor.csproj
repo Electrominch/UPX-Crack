@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AccordAdapter\AccordAdapter.csproj" />
     <ProjectReference Include="..\Neural Network\Neural Network.csproj" />
     <ProjectReference Include="..\NeuralTools\NeuralTools.csproj" />
   </ItemGroup>

@@ -8,14 +8,15 @@ using System.Xml.Serialization;
 
 namespace Neural_Network.Next
 {
-    public class NextGen
+    public class NextGen : INeuro
     {
         public string Name { get; set; }
         private Func<double, double> ActivationFunc { get; set; }
         private Func<double, double> DerivativeFunction { get; set; }
-        public Layer[] Layers { get; set; }
+        private Layer[] Layers { get; set; }
         [XmlIgnore]
         public double LearningRatio { get; set; }
+        public int InputNeurons { get => Layers[0].NumOfInputNeurons; }
 
         public double[] ForwardPassData(double[] input)
         {
@@ -67,6 +68,14 @@ namespace Neural_Network.Next
             return sum / targets.Length;
         }
 
+        public double AdjustWeights(double[][] input, double[][] targets)
+        {
+            double err = 0;
+            for (int i = 0; i < input.Length; i++)
+                err += AdjustWeights(input[i], targets[i]);
+            return err / input.Length;
+        }
+
         public NextGen(Func<double, double> activationFunc, Func<double, double> derivativeFunction, params NeuronLayer[] layers)
         {
             SetFuncs(activationFunc, derivativeFunction);
@@ -91,12 +100,6 @@ namespace Neural_Network.Next
             Layers[curLayer] = new Layer(layers[curLayer].NumOfNeurons, 0, layers[curLayer].Bias);
         }
 
-        public static void SaveToFile(NextGen net, string path)
-        {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(NextGen));
-            xmlSerializer.Serialize(File.Create(path), net);
-        }
-
         public static NextGen LoadFromFile(string path)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(NextGen));
@@ -114,6 +117,12 @@ namespace Neural_Network.Next
             }    
             res += $"] LearningRate: {LearningRatio}";
             return res;
+        }
+
+        public void SaveToFile(string path)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(NextGen));
+            xmlSerializer.Serialize(File.Create(path), this);
         }
     }
 

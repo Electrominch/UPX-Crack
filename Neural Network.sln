@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UPXTest", "UPXTest\UPXTest.csproj", "{8BA1773E-7578-473C-AE68-BFC8A9FD1D07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neural Network", "Neural Network\Neural Network.csproj", "{1568F647-BFF9-4F03-AC64-419707DB7BD1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UPX Teach", "UPX Teach\UPX Teach.csproj", "{29970183-8C8F-431F-9B33-D928E9EF808A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UPX Predictor", "UPX Predictor\UPX Predictor.csproj", "{F30900EB-7794-44D1-B468-FD5B2EFBCF0F}"
@@ -16,6 +14,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralTools", "NeuralTools\NeuralTools.csproj", "{A41C2C6C-B174-4011-A48C-0B41E81C0970}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counter", "Counter\Counter.csproj", "{13237BA2-5428-4092-9697-71A3B8ED6D29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccordAdapter", "AccordAdapter\AccordAdapter.csproj", "{A1C57875-0962-407B-AF10-674D470D16D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neural Network", "Neural Network\Neural Network.csproj", "{3CD998CE-EFE4-4857-9056-0375C4E6F983}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,14 +35,6 @@ Global
 		{8BA1773E-7578-473C-AE68-BFC8A9FD1D07}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8BA1773E-7578-473C-AE68-BFC8A9FD1D07}.Release|x64.ActiveCfg = Release|x64
 		{8BA1773E-7578-473C-AE68-BFC8A9FD1D07}.Release|x64.Build.0 = Release|x64
-		{1568F647-BFF9-4F03-AC64-419707DB7BD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1568F647-BFF9-4F03-AC64-419707DB7BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1568F647-BFF9-4F03-AC64-419707DB7BD1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1568F647-BFF9-4F03-AC64-419707DB7BD1}.Debug|x64.Build.0 = Debug|Any CPU
-		{1568F647-BFF9-4F03-AC64-419707DB7BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1568F647-BFF9-4F03-AC64-419707DB7BD1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1568F647-BFF9-4F03-AC64-419707DB7BD1}.Release|x64.ActiveCfg = Release|Any CPU
-		{1568F647-BFF9-4F03-AC64-419707DB7BD1}.Release|x64.Build.0 = Release|Any CPU
 		{29970183-8C8F-431F-9B33-D928E9EF808A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29970183-8C8F-431F-9B33-D928E9EF808A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29970183-8C8F-431F-9B33-D928E9EF808A}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -81,6 +75,22 @@ Global
 		{13237BA2-5428-4092-9697-71A3B8ED6D29}.Release|Any CPU.Build.0 = Release|Any CPU
 		{13237BA2-5428-4092-9697-71A3B8ED6D29}.Release|x64.ActiveCfg = Release|Any CPU
 		{13237BA2-5428-4092-9697-71A3B8ED6D29}.Release|x64.Build.0 = Release|Any CPU
+		{A1C57875-0962-407B-AF10-674D470D16D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1C57875-0962-407B-AF10-674D470D16D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1C57875-0962-407B-AF10-674D470D16D2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A1C57875-0962-407B-AF10-674D470D16D2}.Debug|x64.Build.0 = Debug|Any CPU
+		{A1C57875-0962-407B-AF10-674D470D16D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1C57875-0962-407B-AF10-674D470D16D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1C57875-0962-407B-AF10-674D470D16D2}.Release|x64.ActiveCfg = Release|Any CPU
+		{A1C57875-0962-407B-AF10-674D470D16D2}.Release|x64.Build.0 = Release|Any CPU
+		{3CD998CE-EFE4-4857-9056-0375C4E6F983}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CD998CE-EFE4-4857-9056-0375C4E6F983}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CD998CE-EFE4-4857-9056-0375C4E6F983}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3CD998CE-EFE4-4857-9056-0375C4E6F983}.Debug|x64.Build.0 = Debug|Any CPU
+		{3CD998CE-EFE4-4857-9056-0375C4E6F983}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CD998CE-EFE4-4857-9056-0375C4E6F983}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CD998CE-EFE4-4857-9056-0375C4E6F983}.Release|x64.ActiveCfg = Release|Any CPU
+		{3CD998CE-EFE4-4857-9056-0375C4E6F983}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

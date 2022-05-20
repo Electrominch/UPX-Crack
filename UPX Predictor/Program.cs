@@ -1,4 +1,6 @@
-﻿using Neural_Network.Next;
+﻿using AccordAdapter;
+using Neural_Network;
+using Neural_Network.Next;
 using NeuralTools;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -8,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+
 using static NeuralTools.Funcs;
 
 namespace UPXPredictor
@@ -39,9 +42,9 @@ namespace UPXPredictor
                 var curRound = new Round(redRates, greenRates, blackRates, Result.green, DateTime.Now);
                 var allRounds = DownloadRounds();
                 double[] predicts = new double[3];
-                foreach(var net in ReadNets())
+                foreach(INeuro net in ReadNets())
                 {
-                    var prevRounds = Neurons2Games(net.Layers[0].NumOfInputNeurons);
+                    var prevRounds = Neurons2Games(net.InputNeurons);
                     List<Round> lastRounds = GetLastRounds(allRounds, prevRounds);
                     lastRounds.Add(curRound);
                     var curPredict = net.ForwardPassData(CreateInput(lastRounds).In).ToList();
@@ -63,12 +66,12 @@ namespace UPXPredictor
             }
         }
 
-        static List<NextGen> ReadNets()
+        static List<INeuro> ReadNets()
         {
-            List<NextGen> neurals = new List<NextGen>();
-            foreach (var file in new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Neurals")).GetFiles())
+            List<INeuro> neurals = new List<INeuro>();
+            foreach (var file in new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Accord\\Neurals")).GetFiles())
             {
-                var net = NextGen.LoadFromFile(file.FullName);
+                var net = AccordNeuro.LoadFromFile(file.FullName);
                 net.SetFuncs(Sigmoid, DerSigmoid);
                 net.Name = file.Name;
                 neurals.Add(net);

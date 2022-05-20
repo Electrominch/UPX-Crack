@@ -6,26 +6,28 @@ using System.Linq;
 using System.Net;
 using NeuralTools;
 using static NeuralTools.Funcs;
+using Neural_Network;
+using AccordAdapter;
 
 namespace FindOptimalConf
 {
     internal class Program
     {
-        static int games = 1000;
+        static int games = 2160;
         static double forRate = 0;
 
         static void Main(string[] args)
         {
-            var nets = new List<NextGen>();
+            var nets = new List<INeuro>();
             var maxPrevGames = 0;
             var rs = DownloadRounds();
-            foreach (var file in new DirectoryInfo(@"C:\Users\mrpyt\Desktop\Neurals").GetFiles().OrderBy(f => f.CreationTime))
+            foreach (var file in new DirectoryInfo(@"C:\Users\mrpyt\Desktop\Accord\Neurals").GetFiles().OrderBy(f => f.CreationTime))
             {
-                NextGen net = NextGen.LoadFromFile(file.FullName);
+                INeuro net = AccordNeuro.LoadFromFile(file.FullName);
                 net.SetFuncs(Sigmoid, DerSigmoid);
                 net.Name = file.Name;
                 Console.WriteLine(net);
-                maxPrevGames = Math.Max(maxPrevGames, Neurons2Games(net.Layers[0].NumOfInputNeurons));
+                maxPrevGames = Math.Max(maxPrevGames, Neurons2Games(net.InputNeurons));
                 nets.Add(net);
             }
             var rounds = GetLastRounds(DownloadRounds(), games);
@@ -34,9 +36,9 @@ namespace FindOptimalConf
             Console.WriteLine();
             double max = 0;
             Stat maxStat = new Stat();
-            HashSet<NextGen> maxBunch = null;
+            HashSet<INeuro> maxBunch = null;
             double minForOne = 1;
-            NextGen worst = null; 
+            INeuro worst = null; 
             foreach (var bunch in netBunches.Where(b=>b.Count>0))
             {
                 var res = TestMany(bunch, rounds, maxPrevGames,forRate, out Stat stat);
@@ -63,7 +65,7 @@ namespace FindOptimalConf
             Console.WriteLine($"Worst {worst.Name}: {minForOne}");
         }
 
-        static double TestMany(HashSet<NextGen> nets, List<Round> rounds, int prevGames, double rate, out Stat stat)
+        static double TestMany(HashSet<INeuro> nets, List<Round> rounds, int prevGames, double rate, out Stat stat)
         {
             int win = 0;
             int err = 0;
@@ -72,7 +74,7 @@ namespace FindOptimalConf
                 double[] predicts = new double[3];
                 foreach (var net in nets)
                 {
-                    var prevRoundsForNet = Neurons2Games(net.Layers[0].NumOfInputNeurons);
+                    var prevRoundsForNet = Neurons2Games(net.InputNeurons);
                     var set = CreateInput(rounds.Skip(i-prevRoundsForNet).Take(prevRoundsForNet+1).ToList());
                     var curPredict = net.ForwardPassData(set.In).ToList();
                     for(int j = 0; j < curPredict.Count; j++)
@@ -90,18 +92,6 @@ namespace FindOptimalConf
             stat.win = win;
             stat.lose = err;
             return win * 1.0 / (err+win);
-        }
-
-        struct Stat
-        {
-            public int win;
-            public int lose;
-            public int Games => win+lose;
-
-            public override string ToString()
-            {
-                return $"win:{win} lose:{lose}";
-            }
         }
 
         static HashSet<T>[] GetAllBunches<T>(List<T> aviable)

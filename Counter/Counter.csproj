@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Neural Network\Neural Network.csproj" />
     <ProjectReference Include="..\NeuralTools\NeuralTools.csproj" />
   </ItemGroup>
 

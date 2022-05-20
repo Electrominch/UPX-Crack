@@ -22,7 +22,7 @@ namespace UPXTest
                 Console.WriteLine(file.Name);
                 net = NextGen.LoadFromFile(file.FullName);
                 net.SetFuncs(Sigmoid, DerSigmoid);
-                int games = Neurons2Games(net.Layers[0].Neurons.Length);
+                int games = Neurons2Games(net.InputNeurons);
                 Console.WriteLine($"Games: {games}");
                 Console.WriteLine(Test(rs.Skip(rs.Count - lastCount - games).ToList(), games));
                 Console.WriteLine();
