@@ -22,10 +22,11 @@ namespace UPX_Teach
 
             Console.Write("Кол-во прошлых игр: ");
             int games = int.Parse(Console.ReadLine());
+            List<int> layers = new List<int>() { Games2Neurons(games) };
+            Console.WriteLine($"Первый слой: {layers[0]}");
             Console.Write("Кол-во последних игр для теста: ");
             int forTest = int.Parse(Console.ReadLine());
             Console.Write("Скрытые нейроны (через пробел): ");
-            List<int> layers = new List<int>() { Games2Neurons(games) };
             foreach(var n in Console.ReadLine().Split(' ').Where(s=>Int32.TryParse(s, out int d)).Select(s=>int.Parse(s)))
                 layers.Add(n);
             layers.Add(3);
