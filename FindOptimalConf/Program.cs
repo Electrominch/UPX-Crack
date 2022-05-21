@@ -11,7 +11,7 @@ namespace FindOptimalConf
 {
     internal class Program
     {
-        static int games = 1000;
+        static int games = 2160;
         static double forRate = 0;
 
         static void Main(string[] args)
@@ -92,17 +92,7 @@ namespace FindOptimalConf
             return win * 1.0 / (err+win);
         }
 
-        struct Stat
-        {
-            public int win;
-            public int lose;
-            public int Games => win+lose;
 
-            public override string ToString()
-            {
-                return $"win:{win} lose:{lose}";
-            }
-        }
 
         static HashSet<T>[] GetAllBunches<T>(List<T> aviable)
         {

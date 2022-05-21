@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using NeuralTools;
 using static NeuralTools.Funcs;
 
 namespace UPXPredictor
@@ -38,18 +39,7 @@ namespace UPXPredictor
                 double blackRates = double.Parse(rates.FindElement(By.XPath(@"div[3]/div/div[2]/span[2]/span[2]")).Text.Replace(" ", "").Replace(".", ","));
                 var curRound = new Round(redRates, greenRates, blackRates, Result.green, DateTime.Now);
                 var allRounds = DownloadRounds();
-                double[] predicts = new double[3];
-                foreach(var net in ReadNets())
-                {
-                    var prevRounds = Neurons2Games(net.Layers[0].NumOfInputNeurons);
-                    List<Round> lastRounds = GetLastRounds(allRounds, prevRounds);
-                    lastRounds.Add(curRound);
-                    var curPredict = net.ForwardPassData(CreateInput(lastRounds).In).ToList();
-                    for(int i = 0; i < predicts.Length; i++)
-                        predicts[i]+=1.0* curPredict[i];
-                    Console.WriteLine($"{net.Name+ ":", -13}\t" + string.Join(" ", curPredict) + $" -> {(Result)curPredict.IndexOf(curPredict.Max())}");
-                }
-                predicts = predicts.Select(p => p / predicts.Sum()).ToArray();
+                double[] predicts = Predictor.Predict(allRounds, curRound, ReadNets());
                 Console.WriteLine($"Red:{predicts[0]}\nGreen:{predicts[1]}\nBlack:{predicts[2]}");
                 int[] oldHistory = FindHistory(b);
                 int[] curHistory = FindHistory(b);

@@ -37,8 +37,8 @@ namespace UPX_Teach
             double rate = double.Parse(Console.ReadLine().Replace('.', ','));
             Console.Write("Максимальная ошибка: ");
             double maxError = double.Parse(Console.ReadLine().Replace('.',','));
-            Console.Write("Уверенность для ставки: ");
-            double needForWin = double.Parse(Console.ReadLine().Replace('.',','));
+            Console.Write("Доля игр для ставки: ");
+            double ratedGames = double.Parse(Console.ReadLine().Replace('.',','));
 
             List<Round> rounds = DownloadRounds();
             List<Task> tasks = new List<Task>();
@@ -53,8 +53,8 @@ namespace UPX_Teach
                         nets[curIndex] = new NextGen(Sigmoid, DerSigmoid, layers.Select(n => new NeuronLayer(n)).ToArray());
                         nets[curIndex].LearningRatio = rate;
                         Learn(nets[curIndex], rounds.Take(rounds.Count - forTest).ToList(), games, maxError);
-                        res = Test(nets[curIndex], rounds.Skip(rounds.Count - forTest).ToList(), games, needForWin);
-                        Console.WriteLine($"Обучение{curIndex} - {res}");
+                        res = Test(nets[curIndex], rounds.Skip(rounds.Count - forTest).ToList(), games, ratedGames, out var stat);
+                        Console.WriteLine($"Обучение{curIndex} - {res} - {stat} in {stat.Games} games {stat.Games*1.0/ rounds.Skip(rounds.Count - forTest).Count()}");
                     }
 
                     NextGen.SaveToFile(nets[curIndex], Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "saves", $"net{curIndex}-{res}.txt"));
@@ -91,32 +91,35 @@ namespace UPX_Teach
             }
         }
 
-        public static double Test(NextGen net, List<Round> rounds, int games, double chanceToRate)
+        public static double Test(NextGen net, List<Round> rounds, int games, double rateGames, out Stat stat)
         {
             List<LearningSet> sets = CreateLearnSets(rounds, games);
-            int wins = 0;
-            int errors = 0;
-            int[] ress = new int[3];
+            List<GamePredict> results = new List<GamePredict>();
             foreach (var set in sets)
             {
                 double[] netRes = net.ForwardPassData(set.InputData);
-                if (netRes.Max() < chanceToRate)
-                    continue;
-                string expected = string.Join(" ", set.ExpectedRes);
-                string res = string.Join(" ", netRes);
                 bool win = netRes.ToList().IndexOf(netRes.Max()) == set.ExpectedRes.ToList().IndexOf(set.ExpectedRes.Max());
-                //Console.WriteLine($"{expected} -> {res} -> {win}");
-                if (win)
-                {
-                    wins++;
-                    ress[netRes.ToList().IndexOf(netRes.Max())]++;
-                }
-                else
-                {
-                    errors++;
-                }
+                results.Add(new GamePredict() { confidence = netRes.Max(), win = win });
             }
+            results = results.OrderBy(r => r.confidence).ToList();
+            int wins = 0;
+            int errors = 0;
+            for (int i = (int)(results.Count - results.Count * rateGames - 1); i < results.Count; i++)
+            {
+                if (results[i].win)
+                    wins++;
+                else
+                    errors++;
+            }
+            stat.win = wins;
+            stat.lose = errors;
             return wins * 1.0 / (wins + errors);
+        }
+
+        struct GamePredict
+        {
+            public double confidence;
+            public bool win;
         }
     }
 }
