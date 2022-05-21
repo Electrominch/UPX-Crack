@@ -1,14 +1,15 @@
-﻿using Neural_Network.Next;
+﻿using NeuralTools;
+using static NeuralTools.Funcs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static NeuralTools.Funcs;
+using Neural_Network.Next;
 
 namespace NeuralTools
 {
-    public class Predictor
+    public static class Predictor
     {
         public static double[] Predict(List<Round> allRounds, Round cur, List<NextGen> nets)
         {
@@ -21,7 +22,6 @@ namespace NeuralTools
                 var curPredict = net.ForwardPassData(CreateInput(lastRounds).In).ToList();
                 for (int i = 0; i < predicts.Length; i++)
                     predicts[i] += 1.0 * curPredict[i];
-                Console.WriteLine($"{net.Name + ":",-13}\t" + string.Join(" ", curPredict) + $" -> {(Result)curPredict.IndexOf(curPredict.Max())}");
             }
             predicts = predicts.Select(p => p / predicts.Sum()).ToArray();
             return predicts;

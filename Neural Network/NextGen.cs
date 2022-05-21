@@ -112,7 +112,7 @@ namespace Neural_Network.Next
                 if (i < Layers.Length - 1)
                     res += " ";
             }    
-            res += $"] LearningRate: {LearningRatio}";
+            res += $"]";
             return res;
         }
     }

@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Neural_Network.Next;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,22 +13,6 @@ namespace NeuralTools
 {
     public static class Funcs
     {
-        public static List<Round> ReadRounds(StreamReader s)
-        {
-            List<Round> rounds = new List<Round>();
-            while (s.EndOfStream == false)
-            {
-                string[] values = s.ReadLine().Split('\t').Select(s => s.Trim()).ToArray();
-                double r = double.Parse(values[0]);
-                double g = double.Parse(values[1]);
-                double b = double.Parse(values[2]);
-                Result res = (Result)Enum.Parse(typeof(Result), values[3]);
-                rounds.Add(new Round(r, g, b, res, DateTime.Parse(values[4])));
-            }
-            s.Close();
-            return rounds;
-        }
-
         public static List<LearningSet> CreateLearnSets(List<Round> rounds, int games)
         {
             List<LearningSet> sets = new List<LearningSet>();
@@ -59,19 +46,54 @@ namespace NeuralTools
 
         public static List<Round> GetLastRounds(List<Round> rs, int count)
         {
-            List<Round> rounds = new List<Round>();
+            List<Round> rounds = new List<Round>(count);
             for (int i = rs.Count - count; i < rs.Count; i++)
                 rounds.Add(rs[i]);
             return rounds;
         }
 
-        public static List<Round> DownloadRounds()
+        public static List<Round> DownloadRounds(int gamesFromEnd = 0)
         {
-            using (var client = new WebClient())
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(@"http://135.125.169.130/statsLink");
+            request.AddRange(Math.Min(gamesFromEnd*62, gamesFromEnd * -1 * 62));
+            using var stream = request.GetResponse().GetResponseStream();
+            return ReadRounds(stream);
+        }
+
+        public static List<Round> ReadRounds(Stream s) => ReadRounds(new StreamReader(s));
+        public static List<Round> ReadRounds(StreamReader s)
+        {
+            List<Round> rounds = new List<Round>();
+            while (s.EndOfStream == false)
             {
-                var stream = new StreamReader(client.OpenRead(@"http://135.125.169.130/statsLink"));
-                return ReadRounds(stream);
+                try
+                {
+                    string[] values = s.ReadLine().Split('\t').Select(s => s.Trim()).ToArray();
+                    double r = double.Parse(values[0]);
+                    double g = double.Parse(values[1]);
+                    double b = double.Parse(values[2]);
+                    Result res = (Result)Enum.Parse(typeof(Result), values[3]);
+                    var date = DateTime.Parse(values[4]);
+                    if(date.Year == DateTime.Now.Year)
+                        rounds.Add(new Round(r, g, b, res, date));
+                }
+                catch { }
             }
+            s.Close();
+            return rounds;
+        }
+
+        public static List<NextGen> ReadNets()
+        {
+            List<NextGen> neurals = new List<NextGen>();
+            foreach (var file in new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Neurals")).GetFiles())
+            {
+                var net = NextGen.LoadFromFile(file.FullName);
+                net.SetFuncs(Sigmoid, DerSigmoid);
+                net.Name = file.Name;
+                neurals.Add(net);
+            }
+            return neurals;
         }
 
         public static int Neurons2Games(int n) => (n - 5) / 6;
@@ -83,7 +105,5 @@ namespace NeuralTools
 
         public static double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
         public static double DerSigmoid(double x) => Sigmoid(x) * (1 - Sigmoid(x));
-
-
     }
 }

@@ -16,7 +16,7 @@ namespace UPXTest
 
         static void Main(string[] args)
         {
-            var rs = DownloadRounds();
+            var rs = DownloadRounds(lastCount);
             foreach (var file in new DirectoryInfo(@"C:\Users\mrpyt\Desktop\Neurals").GetFiles().OrderBy(f => f.CreationTime))
             {
                 Console.WriteLine(file.Name);
@@ -24,7 +24,7 @@ namespace UPXTest
                 net.SetFuncs(Sigmoid, DerSigmoid);
                 int games = Neurons2Games(net.Layers[0].Neurons.Length);
                 Console.WriteLine($"Games: {games}");
-                Console.WriteLine(Test(rs.Skip(rs.Count - lastCount - games).ToList(), games));
+                Console.WriteLine(Test(rs, games));
                 Console.WriteLine();
             }
         }

@@ -24,7 +24,7 @@ namespace NeuralTools
 
         public override string ToString()
         {
-            return $"{Red,-10}\t{Green,-10}\t{Black,-10}\t{Result,-8}";
+            return $"{Red,-10}\t{Green,-10}\t{Black,-10}\t{Result,-8}\t{date}";
         }
     }
 }
