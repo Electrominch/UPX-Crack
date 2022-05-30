@@ -12,7 +12,7 @@ namespace UPXTest
     internal class Program
     {
         static NextGen net;
-        static int lastCount = 700;
+        static int lastCount = 2160;
 
         static void Main(string[] args)
         {
@@ -38,8 +38,6 @@ namespace UPXTest
             foreach (var set in sets)
             {
                 double[] netRes = net.ForwardPassData(set.InputData);
-                if (netRes.Max() < 0.95)
-                    continue;
                 string expected = string.Join(" ", set.ExpectedRes);
                 string res = string.Join(" ", netRes);
                 bool win = netRes.ToList().IndexOf(netRes.Max()) == set.ExpectedRes.ToList().IndexOf(set.ExpectedRes.Max());

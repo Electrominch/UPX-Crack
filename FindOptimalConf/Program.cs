@@ -12,7 +12,7 @@ namespace FindOptimalConf
     internal class Program
     {
         static int games = 2160;
-        static double ratedGames = 0.2;
+        static double ratedGames = 0.4;
 
         static void Main(string[] args)
         {
@@ -28,7 +28,8 @@ namespace FindOptimalConf
                 nets.Add(net);
             }
             var rounds = DownloadRounds(games);
-            var netBunches = GetAllBunches(nets);
+            Console.Write("All? ");
+            var netBunches = Console.ReadLine().Contains('y')?GetAllBunches(nets):new HashSet<NextGen>[] { nets.ToHashSet() }.Concat(nets.Select(n=>new HashSet<NextGen>() { n })).ToArray();
             Console.WriteLine(netBunches.Length);
             Console.WriteLine();
             double max = 0;
@@ -59,7 +60,8 @@ namespace FindOptimalConf
                 }
             }
             Console.WriteLine($"{max} - {maxStat} in {games} games ({1.0*maxStat.Games/ games}) with {minConfWithMaxRes}");
-            Console.WriteLine(String.Join(Environment.NewLine, maxBunch));
+            if (maxBunch != null)
+                Console.WriteLine(String.Join(Environment.NewLine, maxBunch));
             Console.WriteLine();
             Console.WriteLine($"Worst {worst.Name}: {minForOne}");
         }
@@ -73,12 +75,13 @@ namespace FindOptimalConf
                 foreach (var net in nets)
                 {
                     var prevRoundsForNet = Neurons2Games(net.Layers[0].NumOfInputNeurons);
-                    var set = CreateInput(rounds.Skip(i-prevRoundsForNet).Take(prevRoundsForNet+1).ToList());
+                    var set = CreateInput(rounds.Skip(i-prevRoundsForNet).Take(prevRoundsForNet).ToList(), rounds[i]);
                     var curPredict = net.ForwardPassData(set.In).ToList();
                     for(int j = 0; j < curPredict.Count; j++)
                         predicts[j] += 1.0 * curPredict[j];
                 }
-                predicts = predicts.Select(p => p / predicts.Sum()).ToArray();
+                if(nets.Count>1)
+                    predicts = predicts.Select(p => p / predicts.Sum()).ToArray();
                 var expected = new LearningSet(new Round[0], rounds[i]);
                 bool win = expected.ExpectedRes.ToList().IndexOf(expected.ExpectedRes.Max()) == predicts.ToList().IndexOf(predicts.Max());
                 ress.Add(new Predict() { predict = predicts, win = win });
@@ -97,17 +100,6 @@ namespace FindOptimalConf
             stat.lose = loses;
             minConf = ress[(int)Math.Max(0, ress.Count - 1 - ress.Count * ratedGames)].predict.Max();
             return wins * 1.0 / (loses + wins);
-        }
-
-        struct Predict
-        {
-            public double[] predict;
-            public bool win;
-
-            public override string ToString()
-            {
-                return String.Join(" ", predict) + $" ({(win ? "win":"lose")})";
-            }
         }
 
         static HashSet<T>[] GetAllBunches<T>(List<T> aviable)

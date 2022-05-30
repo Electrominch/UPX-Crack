@@ -13,25 +13,34 @@ namespace NeuralTools
 {
     public static class Funcs
     {
-        public static List<LearningSet> CreateLearnSets(List<Round> rounds, int games)
+        public static List<CompareBunch> CreateBunches(List<Round> rounds, int prevGames, List<NextGen> nets, double predictConf)
+        {
+            List<CompareBunch> bunches = new List<CompareBunch>();
+            List<Round> prevGamesWithCur = rounds.Take(prevGames + 1).ToList();
+            for (int i = prevGames + 1; i < rounds.Count; i++)
+            {
+                var pred = Predictor.Predict(prevGamesWithCur, nets);
+                if (pred.Max() >= predictConf)
+                    bunches.Add(new CompareBunch(pred, rounds[i - 1]));
+                prevGamesWithCur.Add(rounds[i]);
+                prevGamesWithCur.RemoveAt(0);
+            }
+            return bunches;
+        }
+
+        public static int InputGames(this NextGen n) => Neurons2Games(n.Layers[0].NumOfInputNeurons);
+
+        public static List<LearningSet> CreateLearnSets(List<Round> rounds, int prevGames)
         {
             List<LearningSet> sets = new List<LearningSet>();
-            for (int i = games; i < rounds.Count; i++)
-            {
-                List<Round> prev8 = new List<Round>();
-                for (int j = i - 1; j >= i - games; j--)
-                    prev8.Insert(0, rounds[j]);
-                sets.Add(new LearningSet(prev8.ToArray(), rounds[i]));
-            }
+            for (int i = prevGames; i < rounds.Count; i++)
+                sets.Add(new LearningSet(rounds.Skip(i - prevGames).Take(prevGames).ToArray(), rounds[i]));
             return sets;
         }
 
-        public static Input CreateInput(List<Round> rounds)
+        public static Input CreateInput(List<Round> rounds, Round cur)
         {
-            List<Round> prev = new List<Round>();
-            for (int j = rounds.Count - 2; j >= 0; j--)
-                prev.Insert(0, rounds[j]);
-            return new Input(prev, rounds[rounds.Count - 1]);
+            return new Input(rounds.Take(rounds.Count - 1).ToList(), rounds[rounds.Count - 1]);
         }
 
         public static bool EqualArray<T>(T[] l, T[] r)
@@ -44,9 +53,9 @@ namespace NeuralTools
             return true;
         }
 
-        public static List<Round> GetLastRounds(List<Round> rs, int count)
+        public static List<T> GetLast<T>(List<T> rs, int count)
         {
-            List<Round> rounds = new List<Round>(count);
+            List<T> rounds = new List<T>(count);
             for (int i = rs.Count - count; i < rs.Count; i++)
                 rounds.Add(rs[i]);
             return rounds;
@@ -55,7 +64,7 @@ namespace NeuralTools
         public static List<Round> DownloadRounds(int gamesFromEnd = 0)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(@"http://135.125.169.130/statsLink");
-            request.AddRange(Math.Min(gamesFromEnd*62, gamesFromEnd * -1 * 62));
+            request.AddRange(Math.Min(gamesFromEnd * 62, gamesFromEnd * -1 * 62));
             using var stream = request.GetResponse().GetResponseStream();
             return ReadRounds(stream);
         }
@@ -74,7 +83,7 @@ namespace NeuralTools
                     double b = double.Parse(values[2]);
                     Result res = (Result)Enum.Parse(typeof(Result), values[3]);
                     var date = DateTime.Parse(values[4]);
-                    if(date.Year == DateTime.Now.Year)
+                    if (date.Year == DateTime.Now.Year)
                         rounds.Add(new Round(r, g, b, res, date));
                 }
                 catch { }
@@ -105,5 +114,14 @@ namespace NeuralTools
 
         public static double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
         public static double DerSigmoid(double x) => Sigmoid(x) * (1 - Sigmoid(x));
+
+        public static int IndexOfMax<T>(this T[] array)
+        {
+            T max = array.Max();
+            for (int i = 0; i < array.Length; i++)
+                if (array[i].Equals(max))
+                    return i;
+            return -1;
+        }
     }
 }

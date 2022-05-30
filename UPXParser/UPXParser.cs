@@ -1,5 +1,4 @@
-﻿using Neural_Network.Next;
-using NeuralTools;
+﻿using NeuralTools;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
@@ -10,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static NeuralTools.Funcs;
 
-namespace NeuralTools
+namespace UPX_Parser
 {
     public class UPXParser
     {

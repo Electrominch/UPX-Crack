@@ -32,7 +32,7 @@ namespace Neural_Network.Next
                 }
                 nextL.Activate(ActivationFunc);
             }
-            return Layers[Layers.Length - 1].ActivatedNeurons;
+            return Layers[Layers.Length - 1].ActivatedNeurons.ToArray();
         }
 
         public double AdjustWeights(double[] input, double[] targets)

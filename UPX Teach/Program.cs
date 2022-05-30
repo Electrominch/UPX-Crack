@@ -70,7 +70,7 @@ namespace UPX_Teach
         static void Learn(NextGen net, List<Round> rounds, int games, double maxErr)
         {
             maxErr = new Random().NextDouble()*0.02+maxErr;
-            Console.WriteLine($"ыыыых{maxErr}");
+            Console.WriteLine($"ыыыых {maxErr}");
             List<LearningSet> sets = CreateLearnSets(rounds, games);
             Console.WriteLine($"Сетов: {sets.Count}");
             Random rnd = new Random();
@@ -94,14 +94,14 @@ namespace UPX_Teach
         public static double Test(NextGen net, List<Round> rounds, int games, double rateGames, out Stat stat)
         {
             List<LearningSet> sets = CreateLearnSets(rounds, games);
-            List<GamePredict> results = new List<GamePredict>();
+            List<Predict> results = new List<Predict>();
             foreach (var set in sets)
             {
                 double[] netRes = net.ForwardPassData(set.InputData);
-                bool win = netRes.ToList().IndexOf(netRes.Max()) == set.ExpectedRes.ToList().IndexOf(set.ExpectedRes.Max());
-                results.Add(new GamePredict() { confidence = netRes.Max(), win = win });
+                bool win = netRes.IndexOfMax() == set.ExpectedRes.IndexOfMax();
+                results.Add(new Predict() { predict = netRes, win = win });
             }
-            results = results.OrderBy(r => r.confidence).ToList();
+            results = results.OrderBy(r => r.predict.Max()).ToList();
             int wins = 0;
             int errors = 0;
             for (int i = (int)(results.Count - results.Count * rateGames - 1); i < results.Count; i++)
@@ -114,12 +114,6 @@ namespace UPX_Teach
             stat.win = wins;
             stat.lose = errors;
             return wins * 1.0 / (wins + errors);
-        }
-
-        struct GamePredict
-        {
-            public double confidence;
-            public bool win;
         }
     }
 }

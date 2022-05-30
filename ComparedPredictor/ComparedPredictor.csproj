@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Neural Network\Neural Network.csproj" />
     <ProjectReference Include="..\NeuralTools\NeuralTools.csproj" />
+    <ProjectReference Include="..\UPXParser\UPXParser.csproj" />
   </ItemGroup>
 
 </Project>
