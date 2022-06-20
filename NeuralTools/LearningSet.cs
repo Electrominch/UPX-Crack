@@ -13,6 +13,16 @@ namespace NeuralTools
         private Round _last;
         public double[] InputData { get; private set; }
         public double[] ExpectedRes { get; private set; }
+        private double[] _prevPredicts = new double[] { 0.5, 0.5, 0.5 };
+        public double[] PrevPredict
+        {
+            private get => _prevPredicts;
+            set
+            {
+                _prevPredicts = value;
+                InputData = GetInput();
+            }
+        }
 
         public LearningSet(Round[] prev, Round last)
         {
@@ -34,6 +44,7 @@ namespace NeuralTools
                 ds.Add(r.Result == Result.green ? 0.9 : 0.1);
                 ds.Add(r.Result == Result.black ? 0.9 : 0.1);
             }
+            ds.AddRange(PrevPredict);
             ds.Add(RateTo0_1(_last.Red));
             ds.Add(RateTo0_1(_last.Green));
             ds.Add(RateTo0_1(_last.Black));

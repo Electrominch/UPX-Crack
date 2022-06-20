@@ -12,7 +12,7 @@ namespace FindOptimalConf
     internal class Program
     {
         static int games = 2160;
-        static double ratedGames = 0.4;
+        static double ratedGames = 0.5;
 
         static void Main(string[] args)
         {

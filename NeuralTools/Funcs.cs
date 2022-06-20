@@ -69,6 +69,11 @@ namespace NeuralTools
             return ReadRounds(stream);
         }
 
+        public static List<Round> ReadFromFile(string path)
+        {
+            return ReadRounds(File.OpenText(path));
+        }
+
         public static List<Round> ReadRounds(Stream s) => ReadRounds(new StreamReader(s));
         public static List<Round> ReadRounds(StreamReader s)
         {

@@ -35,9 +35,9 @@ namespace Neural_Network.Next
             return Layers[Layers.Length - 1].ActivatedNeurons.ToArray();
         }
 
-        public double AdjustWeights(double[] input, double[] targets)
+        public double AdjustWeights(double[] input, double[] targets, out double[] output)
         {
-            ForwardPassData(input);
+            output = ForwardPassData(input);
             double[] lastDeltas = new double[Layers[Layers.Length - 1].NumOfInputNeurons];
             for (int i = 0; i < lastDeltas.Length; i++)
                 lastDeltas[i] = (targets[i] - Layers[Layers.Length - 1].ActivatedNeurons[i])*DerivativeFunction(Layers[Layers.Length - 1].Neurons[i]);
